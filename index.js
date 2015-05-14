@@ -1,6 +1,6 @@
 // transpile:main
 
-import { default as packweb } from './lib/packweb';
+import { default as PackWeb } from './lib/packweb';
 
-export { packweb };
+export { PackWeb };
 

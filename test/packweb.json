@@ -1,0 +1,12 @@
+{
+    "packages": {
+        "pack1",
+        "group1": [
+            "pack2",
+            "pack3"
+        ],
+        "group2": [
+            "pack4"
+        ]
+    }
+}
