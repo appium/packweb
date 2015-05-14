@@ -1,2 +1,16 @@
-# packweb
-Tools for maintaining projects with large numbers of packages
+packweb
+===================
+
+Work in progress, stay tuned!
+
+## Watch
+
+```
+npm run watch
+```
+
+## Test
+
+```
+npm test
+```
