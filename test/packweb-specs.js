@@ -61,6 +61,13 @@ describe('PackWeb', () => {
         new PackWeb(fixtures.badOwners2);
       }, /'owners'.+group.+must be an array/);
     });
+    it('should not load mismatched groups', () => {
+      for (let bad of [fixtures.badGroups1, fixtures.badGroups2]) {
+        should.throw(() => {
+          new PackWeb(bad);
+        }, /Packages and owners must have the same groups/);
+      }
+    });
   });
 });
 
