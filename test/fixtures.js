@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 let fixtures = {};
 fixtures.goodArray = {
     packages: [
@@ -10,6 +12,8 @@ fixtures.goodArray = {
       "bob"
     ]
 };
+fixtures.goodArray2 = _.clone(fixtures.goodArray, true);
+fixtures.goodArray2.packages.push("pack4");
 fixtures.goodObject = {
   packages: {
     group1: ["pack1", "pack2"],

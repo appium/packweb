@@ -1,6 +1,6 @@
 
 // create a mock npm library for unit tests
-function injectNpm (pwObj, resMap) {
+function injectNpm (pwObj, user, resMap) {
   pwObj.loadNpm = (async function () {
     if (this.npm) return;
     this.npm = {
@@ -19,6 +19,7 @@ function injectNpm (pwObj, resMap) {
       }
     };
   }).bind(pwObj);
+  pwObj.npmUser = user;
 }
 
 export { injectNpm };

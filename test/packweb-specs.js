@@ -110,7 +110,7 @@ describe('PackWeb', () => {
     let p, stat;
     before(async () => {
       p = new PackWeb(fixtures.goodArray);
-      injectNpm(p, {
+      injectNpm(p, 'alice', {
         ls: {
           pack1: [
             {name: "alice", email: "alice@foo.com"},
@@ -147,7 +147,7 @@ describe('PackWeb', () => {
     let p, stats;
     before(async () => {
       p = new PackWeb(fixtures.goodArray);
-      injectNpm(p, {
+      injectNpm(p, 'alice', {
         ls: {
           pack1: [
             {name: "alice", email: "alice@foo.com"},
@@ -196,7 +196,8 @@ describe('PackWeb', () => {
           {name: "pirate", email: "pirate@foo.com"}
         ],
         pack2: ["foo"],
-        pack3: new Error("404")
+        pack3: new Error("404"),
+        pack4: [{name: "bob", email: "bob@foo.com"}]
       },
       add: {
         bob: {
@@ -211,8 +212,8 @@ describe('PackWeb', () => {
     };
 
     before(async () => {
-      p = new PackWeb(fixtures.goodArray);
-      injectNpm(p, npmSpec);
+      p = new PackWeb(fixtures.goodArray2);
+      injectNpm(p, 'alice', npmSpec);
     });
 
     it('should add and remove owners based on status', async () => {
@@ -220,6 +221,7 @@ describe('PackWeb', () => {
       res.added.should.eql(["bob"]);
       res.removed.should.eql(["pirate"]);
       res.verified.should.eql(["alice"]);
+      res.denied.should.eql(false);
     });
     it('should throw an error if we cannot get status before updating', async () => {
       await p.updateOwnersForPackage("pack2").should.eventually.be
@@ -227,7 +229,7 @@ describe('PackWeb', () => {
     });
     it('should throw an error if npm add/remove fails', async () => {
       npmSpec.add.bob.pack1.success = false;
-      injectNpm(p, npmSpec);
+      injectNpm(p, 'alice', npmSpec);
       await p.updateOwnersForPackage("pack1").should.eventually.be
                 .rejectedWith(/Problem adding bob/);
       npmSpec.add.bob.pack1.success = true;
@@ -235,11 +237,19 @@ describe('PackWeb', () => {
       await p.updateOwnersForPackage("pack1").should.eventually.be
                 .rejectedWith(/Problem removing pirate/);
     });
+    it('should say if active user isnt a current owner', async () => {
+      let res = await p.updateOwnersForPackage("pack4");
+      res.added.should.eql([]);
+      res.removed.should.eql([]);
+      res.verified.should.eql(["bob"]);
+      res.denied.should.equal(true);
+    });
     it('should not throw an error if the package to be updated doesnt exist', async () => {
       let res = await p.updateOwnersForPackage("pack3");
       res.added.should.eql([]);
       res.removed.should.eql([]);
       res.verified.should.eql([]);
+      res.denied.should.equal(false);
     });
   });
 
@@ -276,7 +286,7 @@ describe('PackWeb', () => {
 
     before(async () => {
       p = new PackWeb(fixtures.goodArray);
-      injectNpm(p, npmSpec);
+      injectNpm(p, 'alice', npmSpec);
     });
 
     it('should add and remove owners for all packages', async () => {
