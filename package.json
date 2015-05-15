@@ -26,6 +26,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "asyncbox": "^2.0.2",
     "babel-runtime": "^5.3.3",
     "bluebird": "^2.9.25",
     "lodash": "^3.8.0",
