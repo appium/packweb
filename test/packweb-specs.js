@@ -182,5 +182,100 @@ describe('PackWeb', () => {
       stat.validOwners.should.contain("jlipps");
     });
   });
+
+  describe('#updateOwnersForPackage', () => {
+    let p;
+    let npmSpec = {
+      ls: {
+        pack1: [
+          {name: "alice", email: "alice@foo.com"},
+          {name: "pirate", email: "pirate@foo.com"}
+        ],
+        pack2: ["foo"],
+        pack3: [{email: "alice@foo.com"}]
+      },
+      add: {
+        bob: {
+          pack1: {success: true}
+        }
+      },
+      remove: {
+        pirate: {
+          pack1: {success: true}
+        }
+      }
+    };
+
+    before(async () => {
+      p = new PackWeb(fixtures.goodArray);
+      injectNpm(p, npmSpec);
+    });
+
+    it('should add and remove owners based on status', async () => {
+      let res = await p.updateOwnersForPackage("pack1");
+      res.added.should.eql(["bob"]);
+      res.removed.should.eql(["pirate"]);
+    });
+    it('should throw an error if we cannot get status before updating', async () => {
+      await p.updateOwnersForPackage("pack2").should.eventually.be
+                .rejectedWith(/Did not get a valid/);
+    });
+    it('should throw an error if npm add/remove fails', async () => {
+      npmSpec.add.bob.pack1.success = false;
+      injectNpm(p, npmSpec);
+      await p.updateOwnersForPackage("pack1").should.eventually.be
+                .rejectedWith(/Problem adding bob/);
+      npmSpec.add.bob.pack1.success = true;
+      npmSpec.remove.pirate.pack1 = null;
+      await p.updateOwnersForPackage("pack1").should.eventually.be
+                .rejectedWith(/Problem removing pirate/);
+    });
+  });
+
+  describe('#updateOwnersForPackages', () => {
+    let p;
+    let npmSpec = {
+      ls: {
+        pack1: [
+          {name: "alice", email: "alice@foo.com"},
+          {name: "pirate", email: "pirate@foo.com"}
+        ],
+        pack2: [
+          {name: "alice", email: "alice@foo.com"},
+          {name: "bob", email: "bob@foo.com"}
+        ],
+        pack3: [
+          {name: "alice", email: "alice@foo.com"},
+          {name: "bob", email: "bob@foo.com"},
+          {name: "pirate", email: "pirate@foo.com"}
+        ]
+      },
+      add: {
+        bob: {
+          pack1: {success: true},
+        }
+      },
+      remove: {
+        pirate: {
+          pack1: {success: true},
+          pack3: {success: true}
+        }
+      }
+    };
+
+    before(async () => {
+      p = new PackWeb(fixtures.goodArray);
+      injectNpm(p, npmSpec);
+    });
+
+    it('should add and remove owners for all packages', async () => {
+      let res = await p.updateOwnersForPackages();
+      res.pack1.added.should.eql(["bob"]);
+      res.pack1.removed.should.eql(["pirate"]);
+      res.pack2.added.should.eql([]);
+      res.pack2.removed.should.eql([]);
+      res.pack3.removed.should.eql(["pirate"]);
+    });
+  });
 });
 
