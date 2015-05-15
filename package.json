@@ -21,7 +21,9 @@
     "node"
   ],
   "main": "./build/index.js",
-  "bin": {},
+  "bin": {
+      "packweb": "./build/index.js"
+  },
   "directories": {
     "lib": "lib"
   },
