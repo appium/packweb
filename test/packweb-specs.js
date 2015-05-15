@@ -107,27 +107,71 @@ describe('PackWeb', () => {
   });
 
   describe('#ownerStatusForPackage', () => {
-    let p1, stat1; //, p2, stat2;
+    let p, stat;
     before(async () => {
-      p1 = new PackWeb(fixtures.goodArray);
-      injectNpm(p1, {
+      p = new PackWeb(fixtures.goodArray);
+      injectNpm(p, {
         ls: {
           pack1: [
             {name: "alice", email: "alice@foo.com"},
             {name: "pirate", email: "pirate@foo.com"}
+          ],
+          pack2: ["foo"],
+          pack3: [{email: "alice@foo.com"}]
+        }
+      });
+      stat = await p.ownerStatusForPackage("pack1");
+    });
+    it('should return the valid owners', async () => {
+      stat.validOwners.should.eql(["alice"]);
+    });
+    it('should return the invalid owners', async () => {
+      stat.invalidOwners.should.eql(["pirate"]);
+    });
+    it('should return not yet owners', async () => {
+      stat.notYetOwners.should.eql(["bob"]);
+    });
+    it('should throw an error if npm sends us something weird', async () => {
+      await p.ownerStatusForPackage("pack2").should.eventually.be
+                .rejectedWith(/Did not get a valid owner list/);
+      await p.ownerStatusForPackage("pack3").should.eventually.be
+                .rejectedWith(/Did not get a valid owner list/);
+    });
+  });
+
+  describe('#ownerStatusForPackages', () => {
+    let p, stats;
+    before(async () => {
+      p = new PackWeb(fixtures.goodArray);
+      injectNpm(p, {
+        ls: {
+          pack1: [
+            {name: "alice", email: "alice@foo.com"},
+            {name: "pirate", email: "pirate@foo.com"}
+          ],
+          pack2: [
+            {name: "alice", email: "alice@foo.com"},
+            {name: "bob", email: "bob@foo.com"}
+          ],
+          pack3: [
+            {name: "alice", email: "alice@foo.com"},
+            {name: "bob", email: "bob@foo.com"},
+            {name: "pirate", email: "pirate@foo.com"}
           ]
         }
       });
-      stat1 = await p1.ownerStatusForPackage("pack1");
+      stats = await p.ownerStatusForPackages();
     });
-    it('should return the valid owners', async () => {
-      stat1.validOwners.should.eql(["alice"]);
-    });
-    it('should return the invalid owners', async () => {
-      stat1.invalidOwners.should.eql(["pirate"]);
-    });
-    it('should return not yet owners', async () => {
-      stat1.notYetOwners.should.eql(["bob"]);
+    it('should return data for all packages', async () => {
+      stats.pack1.validOwners.should.eql(["alice"]);
+      stats.pack1.invalidOwners.should.eql(["pirate"]);
+      stats.pack1.notYetOwners.should.eql(["bob"]);
+      stats.pack2.validOwners.should.eql(["alice", "bob"]);
+      stats.pack2.invalidOwners.should.eql([]);
+      stats.pack2.notYetOwners.should.eql([]);
+      stats.pack3.validOwners.should.eql(["alice", "bob"]);
+      stats.pack3.invalidOwners.should.eql(["pirate"]);
+      stats.pack3.notYetOwners.should.eql([]);
     });
   });
 
