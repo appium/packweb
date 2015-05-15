@@ -116,8 +116,8 @@ describe('PackWeb', () => {
             {name: "alice", email: "alice@foo.com"},
             {name: "pirate", email: "pirate@foo.com"}
           ],
-          pack2: ["foo"],
-          pack3: [{email: "alice@foo.com"}]
+          pack2: [{email: "alice@foo.com"}],
+          pack3: new Error("404")
         }
       });
       stat = await p.ownerStatusForPackage("pack1");
@@ -134,8 +134,12 @@ describe('PackWeb', () => {
     it('should throw an error if npm sends us something weird', async () => {
       await p.ownerStatusForPackage("pack2").should.eventually.be
                 .rejectedWith(/Did not get a valid owner list/);
-      await p.ownerStatusForPackage("pack3").should.eventually.be
-                .rejectedWith(/Did not get a valid owner list/);
+    });
+    it('should not error but ignore a package if its not published', async () => {
+      let res = await p.ownerStatusForPackage("pack3");
+      res.validOwners.should.eql([]);
+      res.invalidOwners.should.eql([]);
+      res.notYetOwners.should.eql([]);
     });
   });
 
@@ -192,7 +196,7 @@ describe('PackWeb', () => {
           {name: "pirate", email: "pirate@foo.com"}
         ],
         pack2: ["foo"],
-        pack3: [{email: "alice@foo.com"}]
+        pack3: new Error("404")
       },
       add: {
         bob: {
@@ -215,6 +219,7 @@ describe('PackWeb', () => {
       let res = await p.updateOwnersForPackage("pack1");
       res.added.should.eql(["bob"]);
       res.removed.should.eql(["pirate"]);
+      res.verified.should.eql(["alice"]);
     });
     it('should throw an error if we cannot get status before updating', async () => {
       await p.updateOwnersForPackage("pack2").should.eventually.be
@@ -229,6 +234,12 @@ describe('PackWeb', () => {
       npmSpec.remove.pirate.pack1 = null;
       await p.updateOwnersForPackage("pack1").should.eventually.be
                 .rejectedWith(/Problem removing pirate/);
+    });
+    it('should not throw an error if the package to be updated doesnt exist', async () => {
+      let res = await p.updateOwnersForPackage("pack3");
+      res.added.should.eql([]);
+      res.removed.should.eql([]);
+      res.verified.should.eql([]);
     });
   });
 

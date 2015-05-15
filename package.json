@@ -31,6 +31,7 @@
     "bluebird": "^2.9.25",
     "lodash": "^3.8.0",
     "npm": "^2.9.1",
+    "request": "^2.55.0",
     "source-map-support": "^0.2.10"
   },
   "scripts": {

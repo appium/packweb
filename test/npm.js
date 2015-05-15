@@ -10,7 +10,11 @@ function injectNpm (pwObj, resMap) {
           for (let arg of args) {
             res = res[arg];
           }
-          cb(null, res);
+          if (res instanceof Error) {
+            cb(res);
+          } else {
+            cb(null, res);
+          }
         }
       }
     };

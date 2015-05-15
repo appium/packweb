@@ -1,12 +1,15 @@
 {
     "packages": {
-        "pack1",
         "group1": [
-            "pack2",
-            "pack3"
+            "pack1",
+            "pack2"
         ],
         "group2": [
-            "pack4"
+            "pack3"
         ]
+    },
+    "owners": {
+        "group1": ["bob"],
+        "group2": ["alice"]
     }
 }
