@@ -7,7 +7,7 @@
     "npm",
     "tools"
   ],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "appium",
   "license": "Apache License 2.0",
   "repository": {
@@ -22,7 +22,7 @@
   ],
   "main": "./build/index.js",
   "bin": {
-      "packweb": "./build/index.js"
+    "packweb": "./build/index.js"
   },
   "directories": {
     "lib": "lib"
