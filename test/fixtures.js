@@ -13,10 +13,10 @@ fixtures.goodArray = {
 fixtures.goodObject = {
   packages: {
     group1: ["pack1", "pack2"],
-    group2: ["pack3"]
+    group2: ["pack3", "pack2"]
   }, owners: {
     group1: ["alice", "bob"],
-    group2: ["alice"]
+    group2: ["alice", "charles"]
   }
 };
 
@@ -60,6 +60,9 @@ fixtures.badGroups2 = {
   packages: {group1: ["pack1"]},
   owners: {group2: ["alice"]}
 };
-
+fixtures.mochawait = {
+  packages: ["mochawait"],
+  owners: ["jlipps"]
+};
 
 export default fixtures;
