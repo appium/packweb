@@ -2,10 +2,10 @@
 
 import { asyncify } from 'asyncbox';
 import { default as PackWeb } from './lib/packweb';
-import { default as cli } from './lib/cli';
+import { default as cli, parseConfig } from './lib/cli';
 
 if (module === require.main) {
   asyncify(cli);
 }
 
-export { PackWeb };
+export { PackWeb, parseConfig };
