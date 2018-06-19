@@ -2,17 +2,17 @@ import _ from 'lodash';
 
 let fixtures = {};
 fixtures.goodArray = {
-    packages: [
-      "pack1",
-      "pack2",
-      "pack3"
-    ],
-    owners: [
-      "alice",
-      "bob"
-    ]
+  packages: [
+    "pack1",
+    "pack2",
+    "pack3"
+  ],
+  owners: [
+    "alice",
+    "bob"
+  ]
 };
-fixtures.goodArray2 = _.clone(fixtures.goodArray, true);
+fixtures.goodArray2 = _.cloneDeep(fixtures.goodArray);
 fixtures.goodArray2.packages.push("pack4");
 fixtures.goodObject = {
   packages: {
