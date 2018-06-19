@@ -5,25 +5,25 @@ import { default as fixtures } from './fixtures';
 import { injectNpm } from './npm';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
+
 
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-describe('PackWeb', () => {
-  describe('config files', () => {
-    it('should load config with arrays', () => {
+describe('PackWeb', function () {
+  describe('config files', function () {
+    it('should load config with arrays', function () {
       new PackWeb(fixtures.goodArray);
     });
-    it('should load config with objects', () => {
+    it('should load config with objects', function () {
       new PackWeb(fixtures.goodObject);
     });
-    it('should not load an empty config', () => {
+    it('should not load an empty config', function () {
       should.throw(() => {
         new PackWeb();
       }, /pass in a config object/);
     });
-    it('should not load config of the wrong type', () => {
+    it('should not load config of the wrong type', function () {
       const bads = [fixtures.badTopLevel1, fixtures.badTopLevel2,
                     fixtures.badTopLevel3, fixtures.badTopLevel4];
       for (let bad of bads) {
@@ -32,37 +32,37 @@ describe('PackWeb', () => {
         }, /(needs to have)|(needs to be an)/);
       }
     });
-    it('should not load packages of the wrong type', () => {
+    it('should not load packages of the wrong type', function () {
       should.throw(() => {
         new PackWeb(fixtures.badPackages1);
       }, /needs to be an array of strings/);
     });
-    it('should not load empty package lists', () => {
+    it('should not load empty package lists', function () {
       should.throw(() => {
         new PackWeb(fixtures.badPackages2);
       }, /needs to be an array of strings/);
     });
-    it('should not load packages with bad group values', () => {
+    it('should not load packages with bad group values', function () {
       should.throw(() => {
         new PackWeb(fixtures.badPackages3);
       }, /'packages'.+group.+must be an array/);
     });
-    it('should not load packages with empty group values', () => {
+    it('should not load packages with empty group values', function () {
       should.throw(() => {
         new PackWeb(fixtures.badPackages4);
       }, /'packages'.+group.+must be an array/);
     });
-    it('should not load owners of the wrong type', () => {
+    it('should not load owners of the wrong type', function () {
       should.throw(() => {
         new PackWeb(fixtures.badOwners1);
       }, /needs to be an array of strings/);
     });
-    it('should not load empty owner lists', () => {
+    it('should not load empty owner lists', function () {
       should.throw(() => {
         new PackWeb(fixtures.badOwners2);
       }, /'owners'.+group.+must be an array/);
     });
-    it('should not load mismatched groups', () => {
+    it('should not load mismatched groups', function () {
       for (let bad of [fixtures.badGroups1, fixtures.badGroups2]) {
         should.throw(() => {
           new PackWeb(bad);
@@ -71,34 +71,34 @@ describe('PackWeb', () => {
     });
   });
 
-  describe('#packages', () => {
-    it('should return packages for array-based configs', () => {
+  describe('#packages', function () {
+    it('should return packages for array-based configs', function () {
       let p = new PackWeb(fixtures.goodArray);
       p.packages.should.eql(["pack1", "pack2", "pack3"]);
     });
-    it('should return packages for group-based configs', () => {
+    it('should return packages for group-based configs', function () {
       let p = new PackWeb(fixtures.goodObject);
       p.packages.should.eql(["pack1", "pack2", "pack3"]);
     });
   });
 
-  describe('#owners', () => {
-    it('should return owners for array-based configs', () => {
+  describe('#owners', function () {
+    it('should return owners for array-based configs', function () {
       let p = new PackWeb(fixtures.goodArray);
       p.owners.should.eql(["alice", "bob"]);
     });
-    it('should return owners for group-based configs', () => {
+    it('should return owners for group-based configs', function () {
       let p = new PackWeb(fixtures.goodObject);
       p.owners.should.eql(["alice", "bob", "charles"]);
     });
   });
 
-  describe('#ownersForPackage', () => {
-    it('should return all owners when there are no groups', () => {
+  describe('#ownersForPackage', function () {
+    it('should return all owners when there are no groups', function () {
       let p = new PackWeb(fixtures.goodArray);
       p.ownersForPackage("pack1").should.eql(["alice", "bob"]);
     });
-    it('should return owners in any group the package is in', () => {
+    it('should return owners in any group the package is in', function () {
       let p = new PackWeb(fixtures.goodObject);
       p.ownersForPackage("pack1").should.eql(["alice", "bob"]);
       p.ownersForPackage("pack2").should.eql(["alice", "bob", "charles"]);
@@ -106,9 +106,9 @@ describe('PackWeb', () => {
     });
   });
 
-  describe('#ownerStatusForPackage', () => {
+  describe('#ownerStatusForPackage', function () {
     let p, stat;
-    before(async () => {
+    before(async function () {
       p = new PackWeb(fixtures.goodArray);
       injectNpm(p, 'alice', {
         ls: {
@@ -122,20 +122,20 @@ describe('PackWeb', () => {
       });
       stat = await p.ownerStatusForPackage("pack1");
     });
-    it('should return the valid owners', async () => {
+    it('should return the valid owners', async function () {
       stat.validOwners.should.eql(["alice"]);
     });
-    it('should return the invalid owners', async () => {
+    it('should return the invalid owners', async function () {
       stat.invalidOwners.should.eql(["pirate"]);
     });
-    it('should return not yet owners', async () => {
+    it('should return not yet owners', async function () {
       stat.notYetOwners.should.eql(["bob"]);
     });
-    it('should throw an error if npm sends us something weird', async () => {
+    it('should throw an error if npm sends us something weird', async function () {
       await p.ownerStatusForPackage("pack2").should.eventually.be
                 .rejectedWith(/Did not get a valid owner list/);
     });
-    it('should not error but ignore a package if its not published', async () => {
+    it('should not error but ignore a package if its not published', async function () {
       let res = await p.ownerStatusForPackage("pack3");
       res.validOwners.should.eql([]);
       res.invalidOwners.should.eql([]);
@@ -143,9 +143,9 @@ describe('PackWeb', () => {
     });
   });
 
-  describe('#ownerStatusForPackages', () => {
+  describe('#ownerStatusForPackages', function () {
     let p, stats;
-    before(async () => {
+    before(async function () {
       p = new PackWeb(fixtures.goodArray);
       injectNpm(p, 'alice', {
         ls: {
@@ -166,7 +166,7 @@ describe('PackWeb', () => {
       });
       stats = await p.ownerStatusForPackages();
     });
-    it('should return data for all packages', async () => {
+    it('should return data for all packages', async function () {
       stats.pack1.validOwners.should.eql(["alice"]);
       stats.pack1.invalidOwners.should.eql(["pirate"]);
       stats.pack1.notYetOwners.should.eql(["bob"]);
@@ -179,17 +179,23 @@ describe('PackWeb', () => {
     });
   });
 
-  describe('#ownerStatusForPackage (real NPM)', () => {
-    it('should conect to real npm and display owners', async () => {
+  describe('#ownerStatusForPackage (real NPM)', function () {
+    // this test requires you to be logged in
+    before(function () {
+      if (process.env.CI) {
+        return this.skip();
+      }
+    });
+    it('should connect to real npm and display owners', async function () {
       let p = new PackWeb(fixtures.mochawait);
       let stat = await p.ownerStatusForPackage("mochawait");
       stat.validOwners.should.contain("jlipps");
     });
   });
 
-  describe('#updateOwnersForPackage', () => {
+  describe('#updateOwnersForPackage', function () {
     let p;
-    let npmSpec = {
+    const npmSpec = {
       ls: {
         pack1: [
           {name: "alice", email: "alice@foo.com"},
@@ -211,23 +217,23 @@ describe('PackWeb', () => {
       }
     };
 
-    before(async () => {
+    before(async function () {
       p = new PackWeb(fixtures.goodArray2);
       injectNpm(p, 'alice', npmSpec);
     });
 
-    it('should add and remove owners based on status', async () => {
+    it('should add and remove owners based on status', async function () {
       let res = await p.updateOwnersForPackage("pack1");
       res.added.should.eql(["bob"]);
       res.removed.should.eql(["pirate"]);
       res.verified.should.eql(["alice"]);
       res.denied.should.eql(false);
     });
-    it('should throw an error if we cannot get status before updating', async () => {
+    it('should throw an error if we cannot get status before updating', async function () {
       await p.updateOwnersForPackage("pack2").should.eventually.be
                 .rejectedWith(/Did not get a valid/);
     });
-    it('should throw an error if npm add/remove fails', async () => {
+    it('should throw an error if npm add/remove fails', async function () {
       npmSpec.add.bob.pack1.success = false;
       injectNpm(p, 'alice', npmSpec);
       await p.updateOwnersForPackage("pack1").should.eventually.be
@@ -237,14 +243,14 @@ describe('PackWeb', () => {
       await p.updateOwnersForPackage("pack1").should.eventually.be
                 .rejectedWith(/Problem removing pirate/);
     });
-    it('should say if active user isnt a current owner', async () => {
+    it('should say if active user isnt a current owner', async function () {
       let res = await p.updateOwnersForPackage("pack4");
       res.added.should.eql([]);
       res.removed.should.eql([]);
       res.verified.should.eql(["bob"]);
       res.denied.should.equal(true);
     });
-    it('should not throw an error if the package to be updated doesnt exist', async () => {
+    it('should not throw an error if the package to be updated doesnt exist', async function () {
       let res = await p.updateOwnersForPackage("pack3");
       res.added.should.eql([]);
       res.removed.should.eql([]);
@@ -253,9 +259,9 @@ describe('PackWeb', () => {
     });
   });
 
-  describe('#updateOwnersForPackages', () => {
+  describe('#updateOwnersForPackages', function () {
     let p;
-    let npmSpec = {
+    const npmSpec = {
       ls: {
         pack1: [
           {name: "alice", email: "alice@foo.com"},
@@ -284,12 +290,12 @@ describe('PackWeb', () => {
       }
     };
 
-    before(async () => {
+    before(async function () {
       p = new PackWeb(fixtures.goodArray);
       injectNpm(p, 'alice', npmSpec);
     });
 
-    it('should add and remove owners for all packages', async () => {
+    it('should add and remove owners for all packages', async function () {
       let res = await p.updateOwnersForPackages();
       res.pack1.added.should.eql(["bob"]);
       res.pack1.removed.should.eql(["pirate"]);
@@ -299,4 +305,3 @@ describe('PackWeb', () => {
     });
   });
 });
-
