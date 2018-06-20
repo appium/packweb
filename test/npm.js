@@ -3,6 +3,7 @@
 
 const run = function run (args, map, cb) {
   let res = map;
+  // crawl through the arguments to get to the correct place in the map
   for (const arg of args) {
     res = res[arg];
   }
