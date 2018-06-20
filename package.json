@@ -28,6 +28,8 @@
     "lib": "lib"
   },
   "dependencies": {
+    "@octokit/rest": "^15.9.0",
+    "argparse": "^1.0.10",
     "asyncbox": "^2.0.2",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.5.1",
@@ -37,8 +39,8 @@
     "npm": "^6.1.0",
     "request": "^2.55.0",
     "request-promise": "^4.2.2",
-    "source-map-support": "^0.5.5",
-    "yargs": "^11.0.0"
+    "semver": "^5.5.0",
+    "source-map-support": "^0.5.5"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
