@@ -5,6 +5,7 @@ import { default as fixtures } from './fixtures';
 import { injectNpm } from './npm';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import B from 'bluebird';
 
 
 const should = chai.should();
@@ -164,9 +165,10 @@ describe('PackWeb', function () {
           ]
         }
       });
-      stats = await p.ownerStatusForPackages();
     });
     it('should return data for all packages', async function () {
+      stats = await p.ownerStatusForPackages();
+
       stats.pack1.validOwners.should.eql(["alice"]);
       stats.pack1.invalidOwners.should.eql(["pirate"]);
       stats.pack1.notYetOwners.should.eql(["bob"]);
@@ -302,6 +304,103 @@ describe('PackWeb', function () {
       res.pack2.added.should.eql([]);
       res.pack2.removed.should.eql([]);
       res.pack3.removed.should.eql(["pirate"]);
+    });
+  });
+
+  describe('#publishStatusForPackages', function () {
+    const p = new PackWeb(fixtures.goodArray);
+    before(async function () {
+      injectNpm(p, 'alice', {}, {
+        pack1: {
+          '1.8.1': {
+            repository: {
+              url: 'https://github.com/appium/pack1.git',
+            }
+          },
+        },
+        pack2: {
+          '0.0.1': {
+            repository: {
+              url: 'https://github.com/something/pack2.git',
+            }
+          }
+        },
+        pack3: {
+          '42.42.42': {
+            repository: {
+              url: 'https://github.com/appium/pack3.git',
+            }
+          }
+        },
+      });
+
+      p.octokit = {
+        repos: {
+          getCommits (opts) {
+            const res = {
+              pack1: {
+                data: [{
+                  sha: '12345678901234567890',
+                  commit: {
+                    message: '1.8.1',
+                  },
+                  author: {
+                    login: 'imurchie',
+                  },
+                  committer: {
+                    login: 'imurchie',
+                  },
+                }, {
+                  sha: '012345678901234567890',
+                  commit: {
+                    message: 'Merge something in there',
+                  },
+                  author: {
+                    login: 'imurchie',
+                  },
+                  committer: {
+                    login: 'imurchie',
+                  },
+                }],
+              },
+              pack2: {
+                data: [{
+                  sha: '12345678901234567890',
+                  commit: {
+                    message: 'Update pack1 to 1.8.1',
+                  },
+                  author: {
+                    login: 'imurchie',
+                  },
+                  committer: {
+                    login: 'imurchie',
+                  },
+                }],
+              },
+              pack3: {
+                data: [],
+              },
+            }[opts.repo];
+            return B.resolve(res);
+          }
+        },
+      };
+    });
+    it('should get publish status', async function () {
+      const res = await p.publishStatusForPackages({});
+
+      res[0].repo.should.eql('appium/pack1');
+      res[0].pkg.should.eql('pack1');
+      res[0].commits.length.should.eql(2);
+      res[0].commits[0].message.should.eql('1.8.1');
+
+      res[1].repo.should.eql('something/pack2');
+      res[1].pkg.should.eql('pack2');
+      res[1].commits.length.should.eql(1);
+
+      res[2].repo.should.eql('appium/pack3');
+      res[2].pkg.should.eql('pack3');
+      res[2].commits.length.should.eql(0);
     });
   });
 });
