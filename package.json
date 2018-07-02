@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^15.9.0",
+    "appium-support": "^2.17.0",
     "argparse": "^1.0.10",
     "asyncbox": "^2.0.2",
     "babel-runtime": "=5.8.24",
