@@ -335,6 +335,7 @@ describe('PackWeb', function () {
       });
 
       p.octokit = {
+        authenticate () {},
         repos: {
           getCommits (opts) {
             const res = {
