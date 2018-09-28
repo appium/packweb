@@ -16,7 +16,7 @@ const jsonFixture = path.resolve(__dirname, "..", "..", "test", "packweb.json");
 let server;
 
 async function startServer () {
-  return new B((resolve, reject) => {
+  return await new B((resolve, reject) => {
     server = http.createServer(async (req, res) => {
       res.writeHead(200, {'Content-type': 'application/json'});
       let contents = await fs.readFile(jsonFixture);

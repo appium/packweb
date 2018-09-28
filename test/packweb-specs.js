@@ -25,8 +25,10 @@ describe('PackWeb', function () {
       }, /pass in a config object/);
     });
     it('should not load config of the wrong type', function () {
-      const bads = [fixtures.badTopLevel1, fixtures.badTopLevel2,
-                    fixtures.badTopLevel3, fixtures.badTopLevel4];
+      const bads = [
+        fixtures.badTopLevel1, fixtures.badTopLevel2,
+        fixtures.badTopLevel3, fixtures.badTopLevel4,
+      ];
       for (let bad of bads) {
         should.throw(() => {
           new PackWeb(bad);
@@ -123,13 +125,13 @@ describe('PackWeb', function () {
       });
       stat = await p.ownerStatusForPackage("pack1");
     });
-    it('should return the valid owners', async function () {
+    it('should return the valid owners', function () {
       stat.validOwners.should.eql(["alice"]);
     });
-    it('should return the invalid owners', async function () {
+    it('should return the invalid owners', function () {
       stat.invalidOwners.should.eql(["pirate"]);
     });
-    it('should return not yet owners', async function () {
+    it('should return not yet owners', function () {
       stat.notYetOwners.should.eql(["bob"]);
     });
     it('should throw an error if npm sends us something weird', async function () {
@@ -146,7 +148,7 @@ describe('PackWeb', function () {
 
   describe('#ownerStatusForPackages', function () {
     let p, stats;
-    before(async function () {
+    before(function () {
       p = new PackWeb(fixtures.goodArray);
       injectNpm(p, 'alice', {
         ls: {
@@ -219,7 +221,7 @@ describe('PackWeb', function () {
       }
     };
 
-    before(async function () {
+    before(function () {
       p = new PackWeb(fixtures.goodArray2);
       injectNpm(p, 'alice', npmSpec);
     });
@@ -292,7 +294,7 @@ describe('PackWeb', function () {
       }
     };
 
-    before(async function () {
+    before(function () {
       p = new PackWeb(fixtures.goodArray);
       injectNpm(p, 'alice', npmSpec);
     });
@@ -309,7 +311,7 @@ describe('PackWeb', function () {
 
   describe('#publishStatusForPackages', function () {
     const p = new PackWeb(fixtures.goodArray);
-    before(async function () {
+    before(function () {
       injectNpm(p, 'alice', {}, {
         pack1: {
           '1.8.1': {

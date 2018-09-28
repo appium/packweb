@@ -16,7 +16,7 @@ const run = function run (args, map, cb) {
 
 // create a mock npm library for unit tests
 function injectNpm (pwObj, user, ownerResMap, infoResMap) {
-  pwObj.loadNpm = (async function () {
+  pwObj.loadNpm = (function () {
     if (this.npm) {
       return;
     }
