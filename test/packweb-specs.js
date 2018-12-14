@@ -339,7 +339,7 @@ describe('PackWeb', function () {
       p.octokit = {
         authenticate () {},
         repos: {
-          getCommits (opts) {
+          listCommits (opts) {
             const res = {
               pack1: {
                 data: [{
