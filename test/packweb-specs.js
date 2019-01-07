@@ -77,35 +77,35 @@ describe('PackWeb', function () {
   describe('#packages', function () {
     it('should return packages for array-based configs', function () {
       let p = new PackWeb(fixtures.goodArray);
-      p.packages.should.eql(["pack1", "pack2", "pack3"]);
+      p.packages.should.eql(['pack1', 'pack2', 'pack3']);
     });
     it('should return packages for group-based configs', function () {
       let p = new PackWeb(fixtures.goodObject);
-      p.packages.should.eql(["pack1", "pack2", "pack3"]);
+      p.packages.should.eql(['pack1', 'pack2', 'pack3']);
     });
   });
 
   describe('#owners', function () {
     it('should return owners for array-based configs', function () {
       let p = new PackWeb(fixtures.goodArray);
-      p.owners.should.eql(["alice", "bob"]);
+      p.owners.should.eql(['alice', 'bob']);
     });
     it('should return owners for group-based configs', function () {
       let p = new PackWeb(fixtures.goodObject);
-      p.owners.should.eql(["alice", "bob", "charles"]);
+      p.owners.should.eql(['alice', 'bob', 'charles']);
     });
   });
 
   describe('#ownersForPackage', function () {
     it('should return all owners when there are no groups', function () {
       let p = new PackWeb(fixtures.goodArray);
-      p.ownersForPackage("pack1").should.eql(["alice", "bob"]);
+      p.ownersForPackage('pack1').should.eql(['alice', 'bob']);
     });
     it('should return owners in any group the package is in', function () {
       let p = new PackWeb(fixtures.goodObject);
-      p.ownersForPackage("pack1").should.eql(["alice", "bob"]);
-      p.ownersForPackage("pack2").should.eql(["alice", "bob", "charles"]);
-      p.ownersForPackage("pack3").should.eql(["alice", "charles"]);
+      p.ownersForPackage('pack1').should.eql(['alice', 'bob']);
+      p.ownersForPackage('pack2').should.eql(['alice', 'bob', 'charles']);
+      p.ownersForPackage('pack3').should.eql(['alice', 'charles']);
     });
   });
 
@@ -116,30 +116,30 @@ describe('PackWeb', function () {
       injectNpm(p, 'alice', {
         ls: {
           pack1: [
-            {name: "alice", email: "alice@foo.com"},
-            {name: "pirate", email: "pirate@foo.com"}
+            {name: 'alice', email: 'alice@foo.com'},
+            {name: 'pirate', email: 'pirate@foo.com'}
           ],
-          pack2: [{email: "alice@foo.com"}],
-          pack3: new Error("404")
+          pack2: [{email: 'alice@foo.com'}],
+          pack3: new Error('404')
         }
       });
-      stat = await p.ownerStatusForPackage("pack1");
+      stat = await p.ownerStatusForPackage('pack1');
     });
     it('should return the valid owners', function () {
-      stat.validOwners.should.eql(["alice"]);
+      stat.validOwners.should.eql(['alice']);
     });
     it('should return the invalid owners', function () {
-      stat.invalidOwners.should.eql(["pirate"]);
+      stat.invalidOwners.should.eql(['pirate']);
     });
     it('should return not yet owners', function () {
-      stat.notYetOwners.should.eql(["bob"]);
+      stat.notYetOwners.should.eql(['bob']);
     });
     it('should throw an error if npm sends us something weird', async function () {
-      await p.ownerStatusForPackage("pack2").should.eventually.be
+      await p.ownerStatusForPackage('pack2').should.eventually.be
                 .rejectedWith(/Did not get a valid owner list/);
     });
     it('should not error but ignore a package if its not published', async function () {
-      let res = await p.ownerStatusForPackage("pack3");
+      let res = await p.ownerStatusForPackage('pack3');
       res.validOwners.should.eql([]);
       res.invalidOwners.should.eql([]);
       res.notYetOwners.should.eql([]);
@@ -153,17 +153,17 @@ describe('PackWeb', function () {
       injectNpm(p, 'alice', {
         ls: {
           pack1: [
-            {name: "alice", email: "alice@foo.com"},
-            {name: "pirate", email: "pirate@foo.com"}
+            {name: 'alice', email: 'alice@foo.com'},
+            {name: 'pirate', email: 'pirate@foo.com'}
           ],
           pack2: [
-            {name: "alice", email: "alice@foo.com"},
-            {name: "bob", email: "bob@foo.com"}
+            {name: 'alice', email: 'alice@foo.com'},
+            {name: 'bob', email: 'bob@foo.com'}
           ],
           pack3: [
-            {name: "alice", email: "alice@foo.com"},
-            {name: "bob", email: "bob@foo.com"},
-            {name: "pirate", email: "pirate@foo.com"}
+            {name: 'alice', email: 'alice@foo.com'},
+            {name: 'bob', email: 'bob@foo.com'},
+            {name: 'pirate', email: 'pirate@foo.com'}
           ]
         }
       });
@@ -171,14 +171,14 @@ describe('PackWeb', function () {
     it('should return data for all packages', async function () {
       stats = await p.ownerStatusForPackages();
 
-      stats.pack1.validOwners.should.eql(["alice"]);
-      stats.pack1.invalidOwners.should.eql(["pirate"]);
-      stats.pack1.notYetOwners.should.eql(["bob"]);
-      stats.pack2.validOwners.should.eql(["alice", "bob"]);
+      stats.pack1.validOwners.should.eql(['alice']);
+      stats.pack1.invalidOwners.should.eql(['pirate']);
+      stats.pack1.notYetOwners.should.eql(['bob']);
+      stats.pack2.validOwners.should.eql(['alice', 'bob']);
       stats.pack2.invalidOwners.should.eql([]);
       stats.pack2.notYetOwners.should.eql([]);
-      stats.pack3.validOwners.should.eql(["alice", "bob"]);
-      stats.pack3.invalidOwners.should.eql(["pirate"]);
+      stats.pack3.validOwners.should.eql(['alice', 'bob']);
+      stats.pack3.invalidOwners.should.eql(['pirate']);
       stats.pack3.notYetOwners.should.eql([]);
     });
   });
@@ -192,8 +192,8 @@ describe('PackWeb', function () {
     });
     it('should connect to real npm and display owners', async function () {
       let p = new PackWeb(fixtures.mochawait);
-      let stat = await p.ownerStatusForPackage("mochawait");
-      stat.validOwners.should.contain("jlipps");
+      let stat = await p.ownerStatusForPackage('mochawait');
+      stat.validOwners.should.contain('jlipps');
     });
   });
 
@@ -202,12 +202,12 @@ describe('PackWeb', function () {
     const npmSpec = {
       ls: {
         pack1: [
-          {name: "alice", email: "alice@foo.com"},
-          {name: "pirate", email: "pirate@foo.com"}
+          {name: 'alice', email: 'alice@foo.com'},
+          {name: 'pirate', email: 'pirate@foo.com'}
         ],
-        pack2: ["foo"],
-        pack3: new Error("404"),
-        pack4: [{name: "bob", email: "bob@foo.com"}]
+        pack2: ['foo'],
+        pack3: new Error('404'),
+        pack4: [{name: 'bob', email: 'bob@foo.com'}]
       },
       add: {
         bob: {
@@ -227,35 +227,35 @@ describe('PackWeb', function () {
     });
 
     it('should add and remove owners based on status', async function () {
-      let res = await p.updateOwnersForPackage("pack1");
-      res.added.should.eql(["bob"]);
-      res.removed.should.eql(["pirate"]);
-      res.verified.should.eql(["alice"]);
+      let res = await p.updateOwnersForPackage('pack1');
+      res.added.should.eql(['bob']);
+      res.removed.should.eql(['pirate']);
+      res.verified.should.eql(['alice']);
       res.denied.should.eql(false);
     });
     it('should throw an error if we cannot get status before updating', async function () {
-      await p.updateOwnersForPackage("pack2").should.eventually.be
+      await p.updateOwnersForPackage('pack2').should.eventually.be
                 .rejectedWith(/Did not get a valid/);
     });
     it('should throw an error if npm add/remove fails', async function () {
       npmSpec.add.bob.pack1.success = false;
       injectNpm(p, 'alice', npmSpec);
-      await p.updateOwnersForPackage("pack1").should.eventually.be
+      await p.updateOwnersForPackage('pack1').should.eventually.be
                 .rejectedWith(/Problem adding bob/);
       npmSpec.add.bob.pack1.success = true;
       npmSpec.remove.pirate.pack1 = null;
-      await p.updateOwnersForPackage("pack1").should.eventually.be
+      await p.updateOwnersForPackage('pack1').should.eventually.be
                 .rejectedWith(/Problem removing pirate/);
     });
     it('should say if active user isnt a current owner', async function () {
-      let res = await p.updateOwnersForPackage("pack4");
+      let res = await p.updateOwnersForPackage('pack4');
       res.added.should.eql([]);
       res.removed.should.eql([]);
-      res.verified.should.eql(["bob"]);
+      res.verified.should.eql(['bob']);
       res.denied.should.equal(true);
     });
     it('should not throw an error if the package to be updated doesnt exist', async function () {
-      let res = await p.updateOwnersForPackage("pack3");
+      let res = await p.updateOwnersForPackage('pack3');
       res.added.should.eql([]);
       res.removed.should.eql([]);
       res.verified.should.eql([]);
@@ -268,17 +268,17 @@ describe('PackWeb', function () {
     const npmSpec = {
       ls: {
         pack1: [
-          {name: "alice", email: "alice@foo.com"},
-          {name: "pirate", email: "pirate@foo.com"}
+          {name: 'alice', email: 'alice@foo.com'},
+          {name: 'pirate', email: 'pirate@foo.com'}
         ],
         pack2: [
-          {name: "alice", email: "alice@foo.com"},
-          {name: "bob", email: "bob@foo.com"}
+          {name: 'alice', email: 'alice@foo.com'},
+          {name: 'bob', email: 'bob@foo.com'}
         ],
         pack3: [
-          {name: "alice", email: "alice@foo.com"},
-          {name: "bob", email: "bob@foo.com"},
-          {name: "pirate", email: "pirate@foo.com"}
+          {name: 'alice', email: 'alice@foo.com'},
+          {name: 'bob', email: 'bob@foo.com'},
+          {name: 'pirate', email: 'pirate@foo.com'}
         ]
       },
       add: {
@@ -301,11 +301,11 @@ describe('PackWeb', function () {
 
     it('should add and remove owners for all packages', async function () {
       let res = await p.updateOwnersForPackages();
-      res.pack1.added.should.eql(["bob"]);
-      res.pack1.removed.should.eql(["pirate"]);
+      res.pack1.added.should.eql(['bob']);
+      res.pack1.removed.should.eql(['pirate']);
       res.pack2.added.should.eql([]);
       res.pack2.removed.should.eql([]);
-      res.pack3.removed.should.eql(["pirate"]);
+      res.pack3.removed.should.eql(['pirate']);
     });
   });
 

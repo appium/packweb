@@ -12,7 +12,7 @@ import { parseConfig } from '../lib/cli';
 chai.should();
 chai.use(chaiAsPromised);
 
-const jsonFixture = path.resolve(__dirname, "..", "..", "test", "packweb.json");
+const jsonFixture = path.resolve(__dirname, '..', '..', 'test', 'packweb.json');
 let server;
 
 async function startServer () {
@@ -44,13 +44,13 @@ describe('PackWeb CLI', function () {
     });
     it('should retrieve JSON from a file', async function () {
       let res = await parseConfig(jsonFixture);
-      res.packages.group1.should.contain("pack1");
-      res.owners.group1.should.eql(["bob"]);
+      res.packages.group1.should.contain('pack1');
+      res.owners.group1.should.eql(['bob']);
     });
     it('should retrieve JSON from a url', async function () {
       let res = await parseConfig('http://localhost:5678');
-      res.packages.group1.should.contain("pack1");
-      res.owners.group1.should.eql(["bob"]);
+      res.packages.group1.should.contain('pack1');
+      res.owners.group1.should.eql(['bob']);
     });
   });
 });
