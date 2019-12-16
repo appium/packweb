@@ -47,7 +47,7 @@
     "npm": "^6.9.1",
     "request": "^2.55.0",
     "request-promise": "^4.2.2",
-    "semver": "^6.0.0",
+    "semver": "^7.0.0",
     "source-map-support": "^0.5.5"
   },
   "scripts": {
