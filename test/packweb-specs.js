@@ -336,57 +336,58 @@ describe('PackWeb', function () {
         },
       });
 
-      p.octokit = {
-        authenticate () {},
-        repos: {
-          listCommits (opts) {
-            const res = {
-              pack1: {
-                data: [{
-                  sha: '12345678901234567890',
-                  commit: {
-                    message: '1.8.1',
-                  },
-                  author: {
-                    login: 'imurchie',
-                  },
-                  committer: {
-                    login: 'imurchie',
-                  },
-                }, {
-                  sha: '012345678901234567890',
-                  commit: {
-                    message: 'Merge something in there',
-                  },
-                  author: {
-                    login: 'imurchie',
-                  },
-                  committer: {
-                    login: 'imurchie',
-                  },
-                }],
-              },
-              pack2: {
-                data: [{
-                  sha: '12345678901234567890',
-                  commit: {
-                    message: 'Update pack1 to 1.8.1',
-                  },
-                  author: {
-                    login: 'imurchie',
-                  },
-                  committer: {
-                    login: 'imurchie',
-                  },
-                }],
-              },
-              pack3: {
-                data: [],
-              },
-            }[opts.repo];
-            return B.resolve(res);
-          }
-        },
+      p.getOctokit = function () {
+        return {
+          repos: {
+            listCommits (opts) {
+              const res = {
+                pack1: {
+                  data: [{
+                    sha: '12345678901234567890',
+                    commit: {
+                      message: '1.8.1',
+                    },
+                    author: {
+                      login: 'imurchie',
+                    },
+                    committer: {
+                      login: 'imurchie',
+                    },
+                  }, {
+                    sha: '012345678901234567890',
+                    commit: {
+                      message: 'Merge something in there',
+                    },
+                    author: {
+                      login: 'imurchie',
+                    },
+                    committer: {
+                      login: 'imurchie',
+                    },
+                  }],
+                },
+                pack2: {
+                  data: [{
+                    sha: '12345678901234567890',
+                    commit: {
+                      message: 'Update pack1 to 1.8.1',
+                    },
+                    author: {
+                      login: 'imurchie',
+                    },
+                    committer: {
+                      login: 'imurchie',
+                    },
+                  }],
+                },
+                pack3: {
+                  data: [],
+                },
+              }[opts.repo];
+              return B.resolve(res);
+            }
+          },
+        };
       };
     });
     it('should get publish status', async function () {
