@@ -1,8 +1,6 @@
 PackWeb
 =======
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/appium/packweb.svg)](https://greenkeeper.io/)
-
 This is a collection of CLI tools designed to help with applications which are
 webs of interrelated NPM packages. Features currently include:
 
